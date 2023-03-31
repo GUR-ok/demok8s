@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demok8s-deployment
+  labels:
+    app: demok8s-app
+spec:
+  strategy:
+    type: Recreate #еще есть Recreate
+  replicas: 3
+  selector:
+    matchLabels:
+      app: demok8s-app
+  template:
+    metadata:
+      labels:
+        app: demok8s-app
+    spec:
+      containers:
+        - name: demok8s-app
+          image: gurok/demok8s:dbv2
+          ports:
+            - containerPort: 8000
+              name: app
+            - containerPort: 9090
+              name: actuator
+
+          livenessProbe:
+            httpGet:
+              port: 9090
+              path: /health
+            failureThreshold: 3
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              port: 9090
+              path: /health
+            failureThreshold: 1
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              port: 9090
+              path: /health
+            failureThreshold: 30
+            periodSeconds: 10
+
+          env:
+            - name: FOO_MSG
+              valueFrom:
+                configMapKeyRef:
+                  name: demok8s-configmap
+                  key: FOO_MSG_CONFIGMAP_KEY
+#            - name: SPRING_PROFILES_ACTIVE
+#              value: "local"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: DATABASE_URL
+            - name: DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: DATABASE_NAME
+            - name: DATABASE_SCHEMA
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: DATABASE_SCHEMA
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: SPRING_DATASOURCE_USERNAME
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: SPRING_DATASOURCE_PASSWORD

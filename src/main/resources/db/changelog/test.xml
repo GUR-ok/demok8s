@@ -1,0 +1,23 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="create-table" author="Yuriy Gorelov">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="test"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="test" remarks="Тест">
+            <column name="id" type="uuid" remarks="Идентификатор">
+                <constraints primaryKey="true" primaryKeyName="pk_test"/>
+            </column>
+            <column name="content" type="varchar(255)" remarks="Контент">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,16 @@
+secret:
+  name: demok8s-secret
+deployment:
+  db:
+    image: postgres:latest
+    port: 5432
+    replicas: 1
+service:
+  db:
+    name: postgresql-demok8s-postgres-service
+    host: "postgresql-demok8s-postgres-service"
+    type: ClusterIP
+    port: 5432
+    sport: "5432"
+    dbname: demok8s_db
+    dbschema: public
